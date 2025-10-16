@@ -1,0 +1,10 @@
+google-generativeai
+pandas
+openpyxl
+python-dotenv
+langchain
+transformers
+torch
+sentence-transformers
+faiss-cpu
+numpy
