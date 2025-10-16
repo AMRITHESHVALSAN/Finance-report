@@ -65,15 +65,30 @@ def generate_initial_report(file_path):
             st.stop()
 
     data_string = excel_multiple_sheets_to_string(file_path)
-    mgmnt_prompt = f'''You are a seasoned financial analyst. Your task is to generate a concise, insightful, and professional quarterly management report based exclusively on the provided financial statements.
+    mgmnt_prompt = f'''You are a seasoned financial analyst. Your task is to generate a concise, insightful, and professional quarterly management report. The report must be based exclusively on the provided Balance Sheet (BS), Income Statement (IS), and Equity Statement.
 
-    Your report must include:
-    1.  **Executive Summary:** A high-level summary of financial health and performance.
-    2.  **Financial Performance Analysis (Income Statement):** Analysis of Revenue, Gross Profit, Net Income, and key margins.
-    3.  **Financial Position Analysis (Balance Sheet):** Analysis of Assets, Liabilities, Equity, and key ratios like Current and Debt-to-Equity.
-    4.  **Key Insights and Recommendations:** A maximum of three key insights and one actionable recommendation.
+    Your report must include the following sections and analytical content:
 
-    Use the provided data exclusively:
+    1.  **Executive Summary:**
+        * Provide a high-level summary of the company's financial health and performance for the quarter.
+        * Identify the most significant insights from the Income Statement and Balance Sheet and state them clearly.
+
+    2.  **Financial Performance Analysis (Based on the Income Statement):**
+        * Report the **Total Revenue**, **Gross Profit**, and **Net Income** for the quarter.
+        * Calculate and state the **Gross Profit Margin** (Gross Profit / Total Revenue) as a percentage. Explain what this number reveals about the company's operational efficiency.
+        * Calculate and state the **Net Profit Margin** (Net Income / Total Revenue) as a percentage. Explain what this number indicates about the company's overall profitability.
+
+    3.  **Financial Position Analysis (Based on the Balance Sheet):**
+        * Report the **Total Assets**, **Total Liabilities**, and **Total Equity**.
+        * Calculate and state the **Current Ratio** (Current Assets / Current Liabilities). Interpret this number to explain the company's short-term liquidity.
+        * Calculate and state the **Debt-to-Equity Ratio** (Total Liabilities / Total Equity). Interpret this number to assess the company's leverage and financial risk.
+
+    4.  **Key Insights and Recommendations:**
+        * Synthesize the findings from all your calculations and analysis.
+        * Provide a maximum of three key insights about the company's performance or position.
+        * Based on these insights, provide one actionable recommendation for management to consider.
+
+    Use the provided data exclusively to derive your reports. 
     {data_string}
     The final report must be a single, well-structured text document. Do not include raw financial data in the final report.'''
 
@@ -122,7 +137,14 @@ def get_rag_answer(query, index, chunks, tokenizer, model):
     distances, indices = index.search(query_embedding, k)
     retrieved_chunks = [chunks[idx] for idx in indices[0]]
     context_string = "\n\n---\n\n".join(retrieved_chunks)
-    prompt = f"""You are a skilled financial analyst. Analyze the provided context to answer the user's question. Synthesize information from all chunks for a complete answer. Use ONLY the provided context. If the answer is not in the context, state that.
+    prompt = f"""
+    You are a highly skilled financial analyst. Your task is to analyze the provided context and provide a comprehensive and insightful answer to the user's question.
+
+    Your response must:
+    1.  **Synthesize information** from all provided chunks to create a coherent and complete answer. Do not just list facts.
+    2.  **Strictly use only the information provided** in the context. Do not use any external knowledge.
+    3.  Use the data as context and your own knowledge and capabilities generate a meaningful answer for the user query.
+    4.  If the context does not contain the information needed to answer, state that the information is not available.
 
     User Query: {query}
 
