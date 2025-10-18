@@ -5,7 +5,7 @@ import numpy as np
 import faiss
 # REMOVED: from dotenv import load_dotenv - no longer needed
 from google import generativeai as genai
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 from transformers import AutoModel, AutoTokenizer
 import torch
 
